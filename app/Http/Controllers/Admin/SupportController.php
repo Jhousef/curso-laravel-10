@@ -33,7 +33,7 @@ class SupportController extends Controller
 
     public function store(Request $request, Support $support)
     {
-        $data =($request->all());
+        $data = ($request->all());
         $data['status'] = 'p';
 
         $support->create($data);
@@ -41,8 +41,42 @@ class SupportController extends Controller
         return redirect()->route('supports.index');
     }
 
-    // public function edit(string|int $id)
-    // {
+    public function edit(Support $support, string|int $id)
+    {
+        if(!$support = $support->where('id', $id)->first()){
+            return back();
+        }
 
-    // }
+        return view('admin/supports/edit', compact('support'));
+    }
+
+    public function update(Request $request, Support $support, string|int $id)
+    {
+        if(!$support = $support->find($id)) {
+            return back();
+        }
+
+        // $support->subject = $request->subject;
+        // $support->body = $request->body;
+        // $support->save();
+
+        $support->update($request->only([
+            'subject',
+            'body'
+        ]));
+
+        return redirect()->route('supports.index');
+    }
+
+    public function destroy(Support $support, string|int $id)
+    {
+        if(!$support = $support->find($id)){
+            return back();
+        }
+
+        $support->delete();
+
+        return redirect()->route('supports.index');
+    }
+
 }
