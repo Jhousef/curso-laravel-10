@@ -14,6 +14,22 @@ class SupportEloquentORM implements SupportRepositoryInterface
         protected Support $model
     ){}
 
+    public function paginate(int $page = 1, int $totalPerPage = 15, string $filter = null): PaginationInterface
+    {
+        $result = $this->model
+            ->where(function ($query) use ($filter){
+                if($filter){
+                    $query->where('subject', $filter);
+                    $query->orWhere('body', 'like', "%{$filter}%");
+                }
+            })
+            ->paginate($totalPerPage, ['*'], 'page', $page);
+
+            dd((new PaginationPresenter($result))->items());
+        return new PaginationPresenter($result);
+
+    }
+
     public function getAll(string $filter = null): array
     {
         return $this->model
@@ -23,13 +39,14 @@ class SupportEloquentORM implements SupportRepositoryInterface
                 $query->orWhere('body', 'like', "%{$filter}%");
             }
         })
-        ->all()
+        ->get()
         ->toArray();
     }
     public function findOne(string $id): stdClass|null
     {
         $support = $this->model->find($id);
-        if($support) {
+
+        if(!$support) {
             return null;
         }
 
