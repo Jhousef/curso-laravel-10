@@ -2,8 +2,8 @@
 
 namespace App\Repositories;
 
-use App\DTO\CreateSupportDTO;
-use App\DTO\UpdateSupportDTO;
+use App\DTO\Supports\CreateSupportDTO;
+use App\DTO\Supports\UpdateSupportDTO;
 use App\Models\Support;
 use App\Repositories\SupportRepositoryInterface;
 use stdClass;
@@ -25,7 +25,6 @@ class SupportEloquentORM implements SupportRepositoryInterface
             })
             ->paginate($totalPerPage, ['*'], 'page', $page);
 
-            dd((new PaginationPresenter($result))->items());
         return new PaginationPresenter($result);
 
     }
